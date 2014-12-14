@@ -1,5 +1,5 @@
 body {
-	padding: 0px;
+    padding: 0px;
     margin: 0px;
     font-family: arial;
 }
@@ -44,6 +44,7 @@ body {
 	-webkit-flex-flow: row wrap;
 	flex-flow: row wrap;
 	flex: 1 100%;
+	background: #222222;
 }
 .canvas > * {
 	flex: 1 1 300px;
@@ -51,8 +52,43 @@ body {
 }
 .canvas img {
 	width: 100%;
+	border-radius: 5px;
 }
 .canvas a {
 	text-decoration: none;
-	color: black;
+	color: white;
+}
+.canvas > div > p {
+	position: relative;
+	top: -30px;
+	margin: 0;
+	background: white;
+	padding: 10px;
+	border-radius: 5px;
+	overflow: hidden;
+}
+.canvas > div > p > *{
+	padding-bottom: 10px;
+	white-space: pre;
+}
+.description {
+	white-space: normal !important;
+}
+.canvas a > p {
+	position: relative;
+	top: -40px;
+	margin: 0;
+	padding: 5px;
+	height: 60px;
+	background: black;
+	opacity: 0.8;
+	border-radius: 5px;
+}
+@media all and (max-width: 720px) {
+	.logo {
+		width: 215px;
+		margin: auto;
+		margin-top: 10px;
+		position: static;
+	}
 }

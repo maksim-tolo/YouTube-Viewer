@@ -1,5 +1,7 @@
 var searchBar = document.createElement('input');
 var canvas = document.createElement('div');
+var blockCount;
+var clipList = [];
 var CallbackRegistry = {};
 
 (function () {
@@ -26,12 +28,13 @@ var CallbackRegistry = {};
 searchBar.addEventListener('input', function() {
 	var searchRequest = searchBar.value;
 	canvas.innerHTML = '';
+	clipList = [];
+	blockCount = parseInt(document.documentElement.clientWidth/310);
 	scriptRequest('http://gdata.youtube.com/feeds/api/videos/', searchRequest, convertYouTubeResponseToClipList);
-
+	canvas.style.height = document.documentElement.clientHeight - 76 + 'px';
 });
 
 function convertYouTubeResponseToClipList(rawYouTubeData) {
-    var clipList = [];
     var entries = rawYouTubeData.feed.entry;
     if (entries) {
         for (var i = 0, l = entries.length; i < l; i++) {
@@ -50,7 +53,6 @@ function convertYouTubeResponseToClipList(rawYouTubeData) {
             });
         }
     }
-    return clipList;
 };
 
 function scriptRequest(url, searchRequest, onSuccess) {
@@ -64,7 +66,8 @@ function scriptRequest(url, searchRequest, onSuccess) {
   	CallbackRegistry[callbackName] = function(data) {       
     	scriptOk = true;
     	delete CallbackRegistry[callbackName];
-    	drawPage(onSuccess(data));
+    	onSuccess(data);
+    	drawPage(blockCount);
   	};
 
  	function checkCallback() {      
@@ -86,13 +89,15 @@ function scriptRequest(url, searchRequest, onSuccess) {
 	script.parentNode.removeChild(script);
 };
 
-function drawPage(clipList) {
-	var count = document.documentElement.clientWidth/300;
-	count = count.toFixed();
-
+function drawPage(count) {
 	for (var i=0; i < count; i++) {
 		var div = document.createElement('div');
 		var title = document.createElement('p');
+		var description = document.createElement('div');
+		var author = document.createElement('div');
+		var publishDate = document.createElement('div');
+		var viewCount = document.createElement('div');
+		var p = document.createElement('p');
 		canvas.appendChild(div);
 		var youtubeLink = document.createElement('a');
 		var thumbnail = document.createElement('img');
@@ -100,8 +105,31 @@ function drawPage(clipList) {
 		youtubeLink.href = clipList[i].youtubeLink;
 		youtubeLink.target = '_blank';
 		title.innerHTML = clipList[i].title;
+		description.innerHTML = clipList[i].description;
+		author.innerHTML = ' ' + clipList[i].author;
+		publishDate.innerHTML = ' ' + clipList[i].publishDate;
+		viewCount.innerHTML = ' ' + clipList[i].viewCount;
 		div.appendChild(youtubeLink);
+		div.appendChild(p);
+		p.appendChild(author);
+		p.appendChild(publishDate);
+		p.appendChild(viewCount);
+		p.appendChild(description);
 		youtubeLink.appendChild(thumbnail);
 		youtubeLink.appendChild(title);
+		author.classList.add('icon-user');
+		publishDate.classList.add('icon-calendar');
+		viewCount.classList.add('icon-eye');
+		description.classList.add('description');
 	};
 };
+
+window.addEventListener('resize', function(){
+	var count = parseInt(document.documentElement.clientWidth/310);
+	if (count!==blockCount){
+		canvas.innerHTML = '';
+		blockCount=count;
+		drawPage(count);
+	}
+	canvas.style.height = document.documentElement.clientHeight - 76 + 'px';
+});
