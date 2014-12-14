@@ -1,0 +1,58 @@
+body {
+    padding: 0px;
+    margin: 0px;
+    font-family: arial;
+}
+.clearfix:after{
+	content: ' ';
+	display: table;
+	clear: both;
+}
+.logo > img {
+	width: 100px;
+	float: left;
+}
+.logo {
+	margin-left: 10px;
+	position: absolute;
+}
+.logo p {
+	margin: 0;
+	padding: 0;
+	float: left;
+	font-size: 35px;
+	font-weight: bold;
+}
+.searchBar {
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.searchBar > * {
+	background: #222222;
+	border-color: grey;
+	width: 250px;
+	height: 30px;
+	color: white;
+}
+.canvas {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-flow: row wrap;
+	flex-flow: row wrap;
+	flex: 1 100%;
+}
+.canvas > * {
+	flex: 1 1 300px;
+	margin: 5px;
+}
+.canvas img {
+	width: 100%;
+}
+.canvas a {
+	text-decoration: none;
+	color: black;
+}
