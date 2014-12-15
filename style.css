@@ -2,6 +2,7 @@ body {
     padding: 0px;
     margin: 0px;
     font-family: arial;
+    background: #333333;
 }
 .clearfix:after{
 	content: ' ';
@@ -30,7 +31,7 @@ body {
 }
 .searchBar > * {
 	background: #222222;
-	border-color: grey;
+	border-color: #e42526;
 	width: 250px;
 	height: 30px;
 	color: white;
@@ -44,7 +45,6 @@ body {
 	-webkit-flex-flow: row wrap;
 	flex-flow: row wrap;
 	flex: 1 100%;
-	background: #222222;
 }
 .canvas > * {
 	flex: 1 1 300px;
@@ -73,6 +73,7 @@ body {
 }
 .description {
 	white-space: normal !important;
+	height: 100px;
 }
 .canvas a > p {
 	position: relative;
@@ -83,6 +84,19 @@ body {
 	background: black;
 	opacity: 0.8;
 	border-radius: 5px;
+}
+footer {
+	text-align: center;
+}
+footer div{
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	margin: 5px;
+	border-radius: 10px;
+	background: #e42526;
+	opacity: 0.5;
+	cursor: pointer;
 }
 @media all and (max-width: 720px) {
 	.logo {

@@ -1,8 +1,13 @@
 var searchBar = document.createElement('input');
 var canvas = document.createElement('div');
+var footer = document.createElement('footer');
 var blockCount;
+var elCount;
 var clipList = [];
 var CallbackRegistry = {};
+var swipe = {};
+var pageNumber;
+var shiftList;
 
 (function () {
 	var logo = document.createElement('div');
@@ -20,18 +25,23 @@ var CallbackRegistry = {};
 	document.body.appendChild(logo);
 	document.body.appendChild(div);
 	document.body.appendChild(canvas);
+	document.body.appendChild(footer);
 	logo.appendChild(img);
 	logo.appendChild(p);
 	div.appendChild(searchBar);
 })();
 
 searchBar.addEventListener('input', function() {
-	var searchRequest = searchBar.value;
+	searchRequest = searchBar.value;
+	var startIndex=1;
 	canvas.innerHTML = '';
+	footer.innerHTML = '';
+	shiftList = 0;
+	pageNumber = 1;
 	clipList = [];
 	blockCount = parseInt(document.documentElement.clientWidth/310);
-	scriptRequest('http://gdata.youtube.com/feeds/api/videos/', searchRequest, convertYouTubeResponseToClipList);
-	canvas.style.height = document.documentElement.clientHeight - 76 + 'px';
+	elCount = 0;
+	scriptRequest('http://gdata.youtube.com/feeds/api/videos/', startIndex, searchRequest, convertYouTubeResponseToClipList);
 });
 
 function convertYouTubeResponseToClipList(rawYouTubeData) {
@@ -55,19 +65,23 @@ function convertYouTubeResponseToClipList(rawYouTubeData) {
     }
 };
 
-function scriptRequest(url, searchRequest, onSuccess) {
+function scriptRequest(url, startIndex, searchRequest, onSuccess, start, finish) {
 	var script = document.createElement('script');
 	var scriptOk = false;
   	var callbackName = 'myJsonPCallback';
   	url += '?callback=CallbackRegistry.'+callbackName;
- 	url += '&v=2&alt=json&max-results=15&start-index=1&q=';
+ 	url += '&v=2&alt=json&max-results=15&start-index='
+ 	url += startIndex;
+ 	url += '&q=';
  	url += searchRequest;
+ 	start = typeof start !== 'undefined' ? start : 0;
+   	finish = typeof finish !== 'undefined' ? finish : blockCount;
 
   	CallbackRegistry[callbackName] = function(data) {       
     	scriptOk = true;
     	delete CallbackRegistry[callbackName];
     	onSuccess(data);
-    	drawPage(blockCount);
+    	drawPage(start, finish);
   	};
 
  	function checkCallback() {      
@@ -89,8 +103,8 @@ function scriptRequest(url, searchRequest, onSuccess) {
 	script.parentNode.removeChild(script);
 };
 
-function drawPage(count) {
-	for (var i=0; i < count; i++) {
+function drawPage(start, count) {
+	for (var i=start; i < count; i++) {
 		var div = document.createElement('div');
 		var title = document.createElement('p');
 		var description = document.createElement('div');
@@ -122,14 +136,107 @@ function drawPage(count) {
 		viewCount.classList.add('icon-eye');
 		description.classList.add('description');
 	};
+	
+	for(var i=0; i<5; i++) {
+		var div = document.createElement('div');
+		if(i===0) div.style.opacity = '1';
+		div.classList.add('page_'+i);
+		footer.appendChild(div);
+	};
 };
 
 window.addEventListener('resize', function(){
 	var count = parseInt(document.documentElement.clientWidth/310);
-	if (count!==blockCount){
-		canvas.innerHTML = '';
-		blockCount=count;
-		drawPage(count);
+	if (count>blockCount){
+		if(elCount+count>pageNumber*15-shiftList) {
+			shiftList=pageNumber*15-elCount;
+			clipList = [];
+			scriptRequest('http://gdata.youtube.com/feeds/api/videos/', elCount+1, searchBar.value, convertYouTubeResponseToClipList);
+			canvas.innerHTML = '';
+			footer.innerHTML = '';
+			pageNumber++;
+			blockCount=count;
+		}
+		else {
+			canvas.innerHTML = '';
+			footer.innerHTML = '';
+			drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+count+shiftList);
+			blockCount=count;
+		}
 	}
-	canvas.style.height = document.documentElement.clientHeight - 76 + 'px';
+	else if (count<blockCount) {
+		if (pageNumber>=((elCount+shiftList)/15+1)) {
+			canvas.innerHTML = '';
+			footer.innerHTML = '';
+			blockCount=count;
+			//pageNumber--;
+			drawPage(0,count);
+		}
+		else {
+			canvas.innerHTML = '';
+			footer.innerHTML = '';
+			drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+count+shiftList);
+			blockCount=count;
+		}
+	};
 });
+
+footer.addEventListener('click', function(e) {
+	if(e.target.style.opacity!=='1') pageRight();
+	else pageLeft();
+});
+
+canvas.addEventListener('mousedown', function(e) {
+	swipe.mouseDown = true;
+	swipe.tmpX = e.pageX;
+	swipe.tmpY = e.pageY;
+});
+canvas.addEventListener('mouseup', function(e) {
+	if(swipe.mouseDown) {
+		var deltaX = e.pageX-swipe.tmpX;
+		var deltaY = e.pageY-swipe.tmpY;
+		if(deltaX > 100 && deltaX > Math.abs(2*deltaY)) pageRight();
+		if(deltaX < 100 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
+		swipe.mouseDown=false;
+	};
+});
+
+function pageRight() {
+	elCount+=blockCount;
+	if(elCount+blockCount>pageNumber*15-shiftList) {
+		if(elCount!==pageNumber*15-shiftList) shiftList=pageNumber*15-elCount;
+		clipList = [];
+		canvas.innerHTML = '';
+		footer.innerHTML = '';
+		scriptRequest('http://gdata.youtube.com/feeds/api/videos/', elCount+1, searchBar.value, convertYouTubeResponseToClipList);
+		pageNumber++;
+	}
+	else {
+		canvas.innerHTML = '';
+		footer.innerHTML = '';
+		drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+blockCount+shiftList);
+	}
+};
+
+function pageLeft() {
+	if (elCount>0) {
+		elCount-=blockCount;
+		if (elCount-15*(pageNumber-1)+shiftList<0) {
+			var tmp = parseInt(15/blockCount);
+			var tmp2;
+			canvas.innerHTML = '';
+			footer.innerHTML = '';
+			clipList = [];
+			if(elCount<0) tmp2=1;
+			else tmp2 = 15*(pageNumber-1)-blockCount*tmp-shiftList+1;
+			pageNumber--;
+			if(elCount+2*blockCount) shiftList=15*(pageNumber-1)-tmp2+1;
+			scriptRequest('http://gdata.youtube.com/feeds/api/videos/', tmp2, searchBar.value, convertYouTubeResponseToClipList, tmp2-1+(tmp-1)*blockCount-(pageNumber-1)*15+shiftList, tmp2-1+(tmp-1)*blockCount+blockCount-(pageNumber-1)*15+shiftList);
+		}
+		else {
+			canvas.innerHTML = '';
+			footer.innerHTML = '';
+			drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+blockCount+shiftList);
+		}
+	}
+};
