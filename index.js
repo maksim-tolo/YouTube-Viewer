@@ -149,12 +149,12 @@ function drawPage(start, count, anim) {
 		if (anim==='left') tmp++;
 		else tmp--;
 	};
-	var left = document.createElement('div');
-	left.classList.add('leftPage');
-	footer.appendChild(left);
 	var right = document.createElement('div');
 	right.classList.add('rightPage');
 	footer.appendChild(right);
+	var left = document.createElement('div');
+	left.classList.add('leftPage');
+	footer.appendChild(left);
 };
 
 window.addEventListener('resize', function(){
@@ -193,8 +193,8 @@ window.addEventListener('resize', function(){
 });
 
 footer.addEventListener('click', function(e) {
-	if(e.target.className==='rightPage') pageRight();
-	if(e.target.className==='leftPage') pageLeft();
+	if(e.target.className==='rightPage') pageLeft();
+	if(e.target.className==='leftPage') pageRight();
 });
 
 canvas.addEventListener('mousedown', function(e) {
