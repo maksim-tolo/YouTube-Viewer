@@ -206,8 +206,8 @@ canvas.addEventListener('mouseup', function(e) {
 	if(swipe.mouseDown) {
 		var deltaX = e.pageX-swipe.tmpX;
 		var deltaY = e.pageY-swipe.tmpY;
-		if(deltaX > 150 && deltaX > Math.abs(2*deltaY)) pageRight();
-		if(deltaX < 150 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
+		if(deltaX > 150 && deltaX > Math.abs(2*deltaY)) pageLeft();
+		if(deltaX < 150 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageRight();
 		swipe.mouseDown=false;
 	};
 });
@@ -234,13 +234,13 @@ function pageRight() {
 		clipList = [];
 		canvas.innerHTML = '';
 		footer.innerHTML = '';
-		scriptRequest('http://gdata.youtube.com/feeds/api/videos/', elCount+1, searchBar.value, convertYouTubeResponseToClipList, 0, blockCount, 'right');
+		scriptRequest('http://gdata.youtube.com/feeds/api/videos/', elCount+1, searchBar.value, convertYouTubeResponseToClipList, 0, blockCount, 'left');
 		pageNumber++;
 	}
 	else {
 		canvas.innerHTML = '';
 		footer.innerHTML = '';
-		drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+blockCount+shiftList, 'right');
+		drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+blockCount+shiftList, 'left');
 	}
 };
 
@@ -257,12 +257,12 @@ function pageLeft() {
 			else tmp2 = 15*(pageNumber-1)-blockCount*tmp-shiftList+1;
 			pageNumber--;
 			if(elCount+2*blockCount) shiftList=15*(pageNumber-1)-tmp2+1;
-			scriptRequest('http://gdata.youtube.com/feeds/api/videos/', tmp2, searchBar.value, convertYouTubeResponseToClipList, tmp2-1+(tmp-1)*blockCount-(pageNumber-1)*15+shiftList, tmp2-1+(tmp-1)*blockCount+blockCount-(pageNumber-1)*15+shiftList);
+			scriptRequest('http://gdata.youtube.com/feeds/api/videos/', tmp2, searchBar.value, convertYouTubeResponseToClipList, tmp2-1+(tmp-1)*blockCount-(pageNumber-1)*15+shiftList, tmp2-1+(tmp-1)*blockCount+blockCount-(pageNumber-1)*15+shiftList, 'right');
 		}
 		else {
 			canvas.innerHTML = '';
 			footer.innerHTML = '';
-			drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+blockCount+shiftList);
+			drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+blockCount+shiftList, 'right');
 		}
 	}
 };
