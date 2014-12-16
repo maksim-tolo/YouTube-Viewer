@@ -107,7 +107,6 @@ footer div{
 	margin: 5px;
 	border-radius: 10px;
 	background: #e42526;
-	opacity: 0.5;
 	cursor: pointer;
 }
 @media all and (max-width: 720px) {

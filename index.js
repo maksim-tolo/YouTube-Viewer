@@ -149,13 +149,12 @@ function drawPage(start, count, anim) {
 		if (anim==='left') tmp++;
 		else tmp--;
 	};
-	
-	for(var i=0; i<5; i++) {
-		var div = document.createElement('div');
-		if(i===0) div.style.opacity = '1';
-		div.classList.add('page_'+i);
-		footer.appendChild(div);
-	};
+	var left = document.createElement('div');
+	left.classList.add('leftPage');
+	footer.appendChild(left);
+	var right = document.createElement('div');
+	right.classList.add('rightPage');
+	footer.appendChild(right);
 };
 
 window.addEventListener('resize', function(){
@@ -182,7 +181,6 @@ window.addEventListener('resize', function(){
 			canvas.innerHTML = '';
 			footer.innerHTML = '';
 			blockCount=count;
-			//pageNumber--;
 			drawPage(0,count);
 		}
 		else {
@@ -195,8 +193,8 @@ window.addEventListener('resize', function(){
 });
 
 footer.addEventListener('click', function(e) {
-	if(e.target.style.opacity!=='1') pageRight();
-	else pageLeft();
+	if(e.target.className==='rightPage') pageRight();
+	if(e.target.className==='leftPage') pageLeft();
 });
 
 canvas.addEventListener('mousedown', function(e) {
@@ -223,8 +221,8 @@ canvas.addEventListener('touchmove', function(e) {
 	if(swipe.mouseDown) {
 		var deltaX = e.touches[0].pageX-swipe.tmpX;
 		var deltaY = e.touches[0].pageY-swipe.tmpY;
-		if(deltaX > 10 && deltaX > Math.abs(2*deltaY)) pageRight();
-		if(deltaX < 10 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
+		if(deltaX > 20 && deltaX > Math.abs(2*deltaY)) pageRight();
+		if(deltaX < 20 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
 		swipe.mouseDown=false;
 	};
 });
