@@ -65,7 +65,7 @@ function convertYouTubeResponseToClipList(rawYouTubeData) {
     }
 };
 
-function scriptRequest(url, startIndex, searchRequest, onSuccess, start, finish) {
+function scriptRequest(url, startIndex, searchRequest, onSuccess, start, finish, anim) {
 	var script = document.createElement('script');
 	var scriptOk = false;
   	var callbackName = 'myJsonPCallback';
@@ -76,12 +76,13 @@ function scriptRequest(url, startIndex, searchRequest, onSuccess, start, finish)
  	url += searchRequest;
  	start = typeof start !== 'undefined' ? start : 0;
    	finish = typeof finish !== 'undefined' ? finish : blockCount;
+   	anim = typeof anim !== 'undefined' ? anim : 'left';
 
   	CallbackRegistry[callbackName] = function(data) {       
     	scriptOk = true;
     	delete CallbackRegistry[callbackName];
     	onSuccess(data);
-    	drawPage(start, finish);
+    	drawPage(start, finish, anim);
   	};
 
  	function checkCallback() {      
@@ -103,7 +104,11 @@ function scriptRequest(url, startIndex, searchRequest, onSuccess, start, finish)
 	script.parentNode.removeChild(script);
 };
 
-function drawPage(start, count) {
+function drawPage(start, count, anim) {
+	anim = typeof anim !== 'undefined' ? anim : 'left';
+	var tmp;
+	if (anim==='left') tmp = 0;
+	else tmp = count-start-1;
 	for (var i=start; i < count; i++) {
 		var div = document.createElement('div');
 		var title = document.createElement('p');
@@ -111,6 +116,7 @@ function drawPage(start, count) {
 		var author = document.createElement('div');
 		var publishDate = document.createElement('div');
 		var viewCount = document.createElement('div');
+		var descr = document.createElement('div');
 		var p = document.createElement('p');
 		canvas.appendChild(div);
 		var youtubeLink = document.createElement('a');
@@ -123,18 +129,25 @@ function drawPage(start, count) {
 		author.innerHTML = ' ' + clipList[i].author;
 		publishDate.innerHTML = ' ' + clipList[i].publishDate;
 		viewCount.innerHTML = ' ' + clipList[i].viewCount;
+		descr.innerHTML = 'Description:'
 		div.appendChild(youtubeLink);
 		div.appendChild(p);
+		div.style.animation = anim+' 1s cubic-bezier(0,0,0.25,1) '+2*tmp+'00ms';
+		div.style.webkitAnimation = anim+' 1s cubic-bezier(0,0,0.25,1) '+2*tmp+'00ms';
 		p.appendChild(author);
 		p.appendChild(publishDate);
 		p.appendChild(viewCount);
+		p.appendChild(descr);
 		p.appendChild(description);
 		youtubeLink.appendChild(thumbnail);
 		youtubeLink.appendChild(title);
 		author.classList.add('icon-user');
+		descr.classList.add('descr');
 		publishDate.classList.add('icon-calendar');
 		viewCount.classList.add('icon-eye');
 		description.classList.add('description');
+		if (anim==='left') tmp++;
+		else tmp--;
 	};
 	
 	for(var i=0; i<5; i++) {
@@ -208,13 +221,13 @@ function pageRight() {
 		clipList = [];
 		canvas.innerHTML = '';
 		footer.innerHTML = '';
-		scriptRequest('http://gdata.youtube.com/feeds/api/videos/', elCount+1, searchBar.value, convertYouTubeResponseToClipList);
+		scriptRequest('http://gdata.youtube.com/feeds/api/videos/', elCount+1, searchBar.value, convertYouTubeResponseToClipList, 0, blockCount, 'right');
 		pageNumber++;
 	}
 	else {
 		canvas.innerHTML = '';
 		footer.innerHTML = '';
-		drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+blockCount+shiftList);
+		drawPage (elCount-15*(pageNumber-1)+shiftList, (elCount-15*(pageNumber-1))+blockCount+shiftList, 'right');
 	}
 };
 
@@ -240,3 +253,14 @@ function pageLeft() {
 		}
 	}
 };
+canvas.addEventListener('webkitAnimationEnd', function (e) {
+	if (e.animationName == 'left'||'right') {
+		e.target.style.opacity = '1';
+	}
+});
+
+canvas.addEventListener('animationend', function (e) {
+	if (e.animationName == 'display'||'right') {
+		e.target.style.opacity = '1';
+	}
+});
