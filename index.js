@@ -223,8 +223,8 @@ canvas.addEventListener('touchmove', function(e) {
 	if(swipe.mouseDown) {
 		var deltaX = e.touches[0].pageX-swipe.tmpX;
 		var deltaY = e.touches[0].pageY-swipe.tmpY;
-		if(deltaX > 20 && deltaX > Math.abs(2*deltaY)) pageRight();
-		if(deltaX < 20 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
+		if(deltaX > 10 && deltaX > Math.abs(2*deltaY)) pageRight();
+		if(deltaX < 10 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
 		swipe.mouseDown=false;
 	};
 });
