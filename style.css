@@ -109,6 +109,13 @@ footer div{
 	background: #e42526;
 	cursor: pointer;
 }
+footer p {
+	display: inline-block;
+	position: relative;
+	top: -7px;
+	color: #e42526;
+}
+
 @media all and (max-width: 720px) {
 	.logo {
 		width: 215px;

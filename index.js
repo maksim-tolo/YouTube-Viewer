@@ -149,12 +149,20 @@ function drawPage(start, count, anim) {
 		if (anim==='left') tmp++;
 		else tmp--;
 	};
+	var leftTooltip = document.createElement('p');
+	leftTooltip.classList.add('leftTooltip');
+	footer.appendChild(leftTooltip);
 	var right = document.createElement('div');
-	right.classList.add('rightPage');
+	right.className = 'rightPage';
 	footer.appendChild(right);
 	var left = document.createElement('div');
 	left.classList.add('leftPage');
 	footer.appendChild(left);
+	var rightTooltip = document.createElement('p');
+	rightTooltip.className = 'rightTooltip';
+	footer.appendChild(rightTooltip);
+	leftTooltip.style.display = 'none';
+	rightTooltip.style.display = 'none';
 };
 
 window.addEventListener('resize', function(){
@@ -196,7 +204,20 @@ footer.addEventListener('click', function(e) {
 	if(e.target.className==='rightPage') pageLeft();
 	if(e.target.className==='leftPage') pageRight();
 });
-
+footer.addEventListener('mousedown', function(e) {
+	if(e.target.className==='rightPage'&&parseInt(elCount/blockCount)!==0) {
+		document.querySelector('.leftTooltip').style.display = 'inline-block';
+		document.querySelector('.leftTooltip').innerHTML = parseInt(elCount/blockCount);
+	};
+	if(e.target.className==='leftPage') {
+		document.querySelector('.rightTooltip').style.display = 'inline-block';
+		document.querySelector('.rightTooltip').innerHTML = parseInt(elCount/blockCount) + 2;
+	};
+});
+footer.addEventListener('mouseup', function(e) {
+	if(e.target.className==='rightPage') document.querySelector('.leftTooltip').style.display = 'none';
+	if(e.target.className==='leftPage') document.querySelector('.rightTooltip').style.display = 'none';
+});
 canvas.addEventListener('mousedown', function(e) {
 	swipe.mouseDown = true;
 	swipe.tmpX = e.pageX;
