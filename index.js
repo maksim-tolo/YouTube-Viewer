@@ -216,15 +216,15 @@ canvas.addEventListener('mouseup', function(e) {
 
 canvas.addEventListener('touchstart', function(e) {
 	swipe.mouseDown = true;
-	swipe.tmpX = e.pageX;
-	swipe.tmpY = e.pageY;
+	swipe.tmpX = e.touches[0].pageX;
+	swipe.tmpY = e.touches[0].pageY;
 });
-canvas.addEventListener('touchend', function(e) {
+canvas.addEventListener('touchmove', function(e) {
 	if(swipe.mouseDown) {
-		var deltaX = e.pageX-swipe.tmpX;
-		var deltaY = e.pageY-swipe.tmpY;
-		if(deltaX > 50 && deltaX > Math.abs(2*deltaY)) pageRight();
-		if(deltaX < 50 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
+		var deltaX = e.touches[0].pageX-swipe.tmpX;
+		var deltaY = e.touches[0].pageY-swipe.tmpY;
+		if(deltaX > 20 && deltaX > Math.abs(2*deltaY)) pageRight();
+		if(deltaX < 20 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
 		swipe.mouseDown=false;
 	};
 });
