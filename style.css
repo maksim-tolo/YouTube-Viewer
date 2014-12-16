@@ -3,6 +3,7 @@ body {
     margin: 0px;
     font-family: arial;
     background: #333333;
+    overflow: hidden;
 }
 .clearfix:after{
 	content: ' ';
@@ -46,6 +47,10 @@ body {
 	-webkit-flex-flow: row wrap;
 	flex-flow: row wrap;
 	flex: 1 100%;
+	-webkit-user-select: none;
+ 	-moz-user-select: none;
+  	-ms-user-select: none;
+ 	-o-user-select: none;
 }
 .canvas > * {
 	cursor: pointer;

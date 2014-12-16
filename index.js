@@ -208,8 +208,23 @@ canvas.addEventListener('mouseup', function(e) {
 	if(swipe.mouseDown) {
 		var deltaX = e.pageX-swipe.tmpX;
 		var deltaY = e.pageY-swipe.tmpY;
-		if(deltaX > 100 && deltaX > Math.abs(2*deltaY)) pageRight();
-		if(deltaX < 100 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
+		if(deltaX > 150 && deltaX > Math.abs(2*deltaY)) pageRight();
+		if(deltaX < 150 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
+		swipe.mouseDown=false;
+	};
+});
+
+canvas.addEventListener('touchstart', function(e) {
+	swipe.mouseDown = true;
+	swipe.tmpX = e.pageX;
+	swipe.tmpY = e.pageY;
+});
+canvas.addEventListener('touchend', function(e) {
+	if(swipe.mouseDown) {
+		var deltaX = e.pageX-swipe.tmpX;
+		var deltaY = e.pageY-swipe.tmpY;
+		if(deltaX > 50 && deltaX > Math.abs(2*deltaY)) pageRight();
+		if(deltaX < 50 && Math.abs(deltaX) > Math.abs(2*deltaY)) pageLeft();
 		swipe.mouseDown=false;
 	};
 });
