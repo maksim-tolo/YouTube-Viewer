@@ -214,9 +214,9 @@ footer.addEventListener('mousedown', function(e) {
 		document.querySelector('.rightTooltip').innerHTML = parseInt(elCount/blockCount) + 2;
 	};
 });
-footer.addEventListener('mouseup', function(e) {
-	if(e.target.className==='rightPage') document.querySelector('.leftTooltip').style.display = 'none';
-	if(e.target.className==='leftPage') document.querySelector('.rightTooltip').style.display = 'none';
+window.addEventListener('mouseup', function(e) {
+	document.querySelector('.leftTooltip').style.display = 'none';
+	document.querySelector('.rightTooltip').style.display = 'none';
 });
 canvas.addEventListener('mousedown', function(e) {
 	swipe.mouseDown = true;
