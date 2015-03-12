@@ -14,7 +14,7 @@ var shiftList;
 	var div = document.createElement('div');
 	var img = document.createElement('img');
 	var p = document.createElement('p');
-	img.src = 'YouTube_logo.png';
+	img.src = 'img/YouTube_logo.png';
 	p.innerHTML = 'Viewer';
 	searchBar.type = 'text';
 	searchBar.placeholder = 'Enter the name of the video';
